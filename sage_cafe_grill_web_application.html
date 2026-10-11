@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGE CAFE & GRILL — Fine Dining & Grill in Gulberg III, Lahore</title>
+    <meta name="description" content="Exceptional Flavours. Memorable Moments. Experience premium steaks, handcrafted pastas, signature tarragon chicken, dynamite shrimps & continental cuisine at SAGE CAFE & GRILL, Kasuri Road, Gulberg III, Lahore.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sageDark: '#121316',
+                        sageCard: '#1a1c23',
+                        sageIvory: '#F9F6F0',
+                        sageGold: '#D4AF37',
+                        sageGoldMuted: '#C5A059',
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- React 18 & Babel CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-[#121316] text-[#F9F6F0] font-sans antialiased selection:bg-[#C5A059] selection:text-black">
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+
+        // Central Editable Business Information
+        const RESTAURANT_CONFIG = {
+            name: "SAGE CAFE & GRILL",
+            tagline: "Exceptional Flavours. Memorable Moments.",
+            subtext: "Discover signature dishes, carefully prepared favourites and an unparalleled dining experience in the heart of Gulberg III, Lahore.",
+            location: "Gulberg III, Lahore, Pakistan",
+            address: "Hussain, 57-B Kasuri Road, Chowk, Gulberg Block B III, Lahore, 54660, Pakistan",
+            phone: "+92 42 32210362",
+            phoneRaw: "+924232210362",
+            whatsappNumber: "+923000000000",
+            googleMapsUrl: "https://maps.app.goo.gl/2gSzShw5mQSwESpx9",
+            foodpandaUrl: "https://www.foodpanda.pk/restaurant/amka/sage-cafe-and-grill-gulberg",
+            hours: [
+                { days: "Monday - Thursday", time: "12:00 PM – 12:00 AM" },
+                { days: "Friday - Sunday", time: "12:00 PM – 01:00 AM" }
+            ],
+            deliveryFee: 150,
+            taxRate: 0.05,
+            demoNotice: "DEMO CONCEPT — Prepared for SAGE CAFE & GRILL Management Review. Menu items & prices are provisional."
+        };
+
+        const MENU_CATEGORIES = [
+            "Popular Dishes",
+            "Appetizers",
+            "Soups",
+            "Burgers",
+            "Sandwiches",
+            "Chicken",
+            "Beef Steaks",
+            "Mexican",
+            "Pan Asian",
+            "Seafood",
+            "Pasta",
+            "Side Orders",
+            "Salads",
+            "Beverages"
+        ];
+
+        const MENU_ITEMS = [
+            {
+                id: "sage-sig-pasta",
+                name: "Sage Signature Chicken Pasta",
+                category: "Pasta",
+                price: 1550,
+                description: "Penne pasta tossed in our velvet sage-infused cream sauce, grilled chicken fillet, parmesan shavings & herbs.",
+                image: "https://images.unsplash.com/photo-1621996346565-e3d5d6281318?auto=format&fit=crop&w=800&q=80",
+                tags: ["⭐ Chef's Choice", "🔥 Bestseller"],
+                isSignature: true
+            },
+            {
+                id: "parm-chick-pasta",
+                name: "Parmesan Chicken Pasta",
+                category: "Pasta",
+                price: 1490,
+                description: "Crispy parmesan-crusted chicken breast served over creamy garlic fettuccine tossed with fresh parsley.",
+                image: "https://images.unsplash.com/photo-1608897013039-887f21d8c804?auto=format&fit=crop&w=800&q=80",
+                tags: ["🔥 Bestseller"],
+                isSignature: true
+            },
+            {
+                id: "fettuccine-alfredo",
+                name: "Chicken Fettuccine Alfredo",
+                category: "Pasta",
+                price: 1420,
+                description: "Classic fettuccine ribbons smothered in rich garlic butter cream sauce, topped with sliced flame-grilled chicken.",
+                image: "https://images.unsplash.com/photo-1645112411341-6c4fd023714a?auto=format&fit=crop&w=800&q=80",
+                tags: ["Classic Pasta"]
+            },
+            {
+                id: "tarragon-chicken",
+                name: "Tarragon Chicken",
+                category: "Chicken",
+                price: 1450,
+                description: "Pan-seared tender chicken fillets lathered in rich velvety creamy tarragon sauce served with sautéed veggies & choice of side.",
+                image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=800&q=80",
+                tags: ["⭐ Chef's Choice"],
+                isSignature: true
+            },
+            {
+                id: "dynamite-shrimps",
+                name: "Dynamite Shrimps",
+                category: "Appetizers",
+                price: 1350,
+                description: "Crispy fried jumbo prawns tossed in sweet-and-spicy creamy dynamite dressing served over shredded lettuce.",
+                image: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=800&q=80",
+                tags: ["🌶️ Spicy", "🔥 Bestseller"],
+                isSignature: true
+            },
+            {
+                id: "classic-beef-burger",
+                name: "Classic Beef Cheese Burger",
+                category: "Burgers",
+                price: 1290,
+                description: "Juicy 200g smashed beef patty, cheddar cheese slice, caramelized onions, house pickle & signature sauce on brioche bun.",
+                image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
+                tags: ["🔥 Bestseller"],
+                isSignature: true
+            },
+            {
+                id: "sage-sig-burger",
+                name: "Sage Signature Chicken Burger",
+                category: "Burgers",
+                price: 1220,
+                description: "Crispy fried chicken breast fillet drenched in house secret sauce, melted cheese, crisp lettuce & dill pickles.",
+                image: "https://images.unsplash.com/photo-1625813506062-0aeb1d7a094b?auto=format&fit=crop&w=800&q=80",
+                tags: ["House Special"]
+            },
+            {
+                id: "cream-mushroom-soup",
+                name: "Cream of Mushroom Soup",
+                category: "Soups",
+                price: 790,
+                description: "Velvety dark wild mushroom soup infused with thyme, garlic butter, heavy cream and toasted garlic croutons.",
+                image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+                tags: ["Warm Favorite"],
+                isSignature: true
+            },
+            {
+                id: "supreme-nachos",
+                name: "Supreme Nachos",
+                category: "Appetizers",
+                price: 1150,
+                description: "Tortilla chips loaded with melted cheddar, jalapeños, pico de gallo, guacamole, sour cream & seasoned minced chicken.",
+                image: "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?auto=format&fit=crop&w=800&q=80",
+                tags: ["Great for Sharing"]
+            },
+            {
+                id: "sage-special-steak",
+                name: "Sage Special Beef Steak",
+                category: "Beef Steaks",
+                price: 2450,
+                description: "Prime import-grade tenderloin beef steak charbroiled to perfection with choice of mushroom, black pepper, or garlic herb sauce.",
+                image: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+                tags: ["⭐ Prime Choice", "🔥 Bestseller"]
+            },
+            {
+                id: "chicken-club-sandwich",
+                name: "Chicken Club Sandwich",
+                category: "Sandwiches",
+                price: 1190,
+                description: "Triple-decker toasted sandwich filled with grilled chicken breast, egg, cheese, lettuce, tomato & mayo with seasoned fries.",
+                image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=800&q=80",
+                tags: ["Lunch Classic"]
+            },
+            {
+                id: "chicken-chow-mein",
+                name: "Chicken Chow Mein",
+                category: "Pan Asian",
+                price: 1150,
+                description: "Wok-tossed egg noodles with sliced chicken, crunchy bell peppers, carrots, spring onions in savory soy sesame glaze.",
+                image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=800&q=80",
+                tags: ["Pan Asian"]
+            },
+            {
+                id: "kung-pao-chicken",
+                name: "Kung Pao Chicken",
+                category: "Pan Asian",
+                price: 1290,
+                description: "Stir-fried chicken cubes with dry chili pods, roasted peanuts, zucchini & scallions in classic szechuan sweet sauce.",
+                image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=800&q=80",
+                tags: ["🌶️ Spicy"]
+            },
+            {
+                id: "mint-margarita",
+                name: "Mint Margarita",
+                category: "Beverages",
+                price: 420,
+                description: "Refreshing blend of fresh mint leaves, fresh lime juice, crushed ice, and sparkling fizz.",
+                image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80",
+                tags: ["Popular Cooler"]
+            }
+        ];
+
+        const GALLERY_IMAGES = [
+            { url: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=1000&q=80", title: "Char-grilled Prime Beef Cuts", sub: "Gourmet Steaks" },
+            { url: "https://images.unsplash.com/photo-1621996346565-e3d5d6281318?auto=format&fit=crop&w=1000&q=80", title: "Handcrafted Creamy Pastas", sub: "Signature Sauces" },
+            { url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1000&q=80", title: "Artisanal Burger Creations", sub: "100% Prime Patty" },
+            { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80", title: "Warm Contemporary Ambience", sub: "Gulberg III Interior" },
+            { url: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=1000&q=80", title: "Crispy Dynamite Shrimps", sub: "Popular Appetizer" },
+            { url: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1000&q=80", title: "Handcrafted Mocktails & Coolers", sub: "Fresh Botanical Mixes" }
+        ];
+
+        function App() {
+            const [activeCategory, setActiveCategory] = useState("Popular Dishes");
+            const [searchQuery, setSearchQuery] = useState("");
+            const [isSearchOpen, setIsSearchOpen] = useState(false);
+            const [cart, setCart] = useState(() => {
+                try {
+                    const saved = localStorage.getItem('sage_cafe_cart');
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    return [];
+                }
+            });
+            const [isCartOpen, setIsCartOpen] = useState(false);
+            const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+            const [isReservationOpen, setIsReservationOpen] = useState(false);
+            const [lightboxIndex, setLightboxIndex] = useState(null);
+            const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+            const [toastMessage, setToastMessage] = useState(null);
+
+            useEffect(() => {
+                try {
+                    localStorage.setItem('sage_cafe_cart', JSON.stringify(cart));
+                } catch (e) {
+                    console.error(e);
+                }
+            }, [cart]);
+
+            const showToast = (msg) => {
+                setToastMessage(msg);
+                setTimeout(() => {
+                    setToastMessage(null);
+                }, 3000);
+            };
+
+            const addToCart = (item, quantity = 1) => {
+                setCart(prev => {
+                    const existing = prev.find(i => i.id === item.id);
+                    if (existing) {
+                        return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + quantity } : i);
+                    }
+                    return [...prev, { ...item, qty: quantity }];
+                });
+                showToast(`Added ${item.name} to your cart`);
+            };
+
+            const updateQty = (id, delta) => {
+                setCart(prev => prev.map(item => {
+                    if (item.id === id) {
+                        const newQty = item.qty + delta;
+                        return newQty > 0 ? { ...item, qty: newQty } : null;
+                    }
+                    return item;
+                }).filter(Boolean));
+            };
+
+            const removeFromCart = (id) => {
+                setCart(prev => prev.filter(i => i.id !== id));
+            };
+
+            const clearCart = () => {
+                setCart([]);
+            };
+
+            const cartSubtotal = useMemo(() => {
+                return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            }, [cart]);
+
+            const cartTotalItemCount = useMemo(() => {
+                return cart.reduce((sum, item) => sum + item.qty, 0);
+            }, [cart]);
+
+            const cartTax = Math.round(cartSubtotal * RESTAURANT_CONFIG.taxRate);
+            const cartGrandTotal = cartSubtotal > 0 ? cartSubtotal + RESTAURANT_CONFIG.deliveryFee + cartTax : 0;
+
+            const filteredMenuItems = useMemo(() => {
+                return MENU_ITEMS.filter(item => {
+                    const matchesSearch = searchQuery === "" || 
+                        item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.category.toLowerCase().includes(searchQuery.toLowerCase());
+                    
+                    if (activeCategory === "Popular Dishes") {
+                        return matchesSearch && (item.tags.some(t => t.includes("Bestseller") || t.includes("Chef's Choice")) || item.isSignature);
+                    }
+                    
+                    return matchesSearch && item.category === activeCategory;
+                });
+            }, [activeCategory, searchQuery]);
+
+            return (
+                <div className="min-h-screen bg-[#121316] text-[#F9F6F0]">
+                    
+                    {/* Top Disclaimer Banner */}
+                    <div className="bg-[#1a1c23] border-b border-[#C5A059]/20 text-xs text-[#C5A059] py-2 px-4 text-center flex items-center justify-center gap-2">
+                        <span>✨ {RESTAURANT_CONFIG.demoNotice}</span>
+                    </div>
+
+                    {/* Top Bar */}
+                    <div className="hidden lg:flex items-center justify-between px-8 py-2 bg-[#0e0f11] text-xs text-gray-400 border-b border-white/5">
+                        <div className="flex items-center gap-6">
+                            <a href={RESTAURANT_CONFIG.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="hover:text-[#D4AF37] transition-colors">
+                                📍 Gulberg III, Lahore, Pakistan
+                            </a>
+                            <a href={`tel:${RESTAURANT_CONFIG.phoneRaw}`} className="hover:text-[#D4AF37] transition-colors">
+                                📞 {RESTAURANT_CONFIG.phone}
+                            </a>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <span>🕒 Daily: 12:00 PM - 12:00 AM</span>
+                            <a href={RESTAURANT_CONFIG.foodpandaUrl} target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] hover:underline">
+                                Foodpanda Reference ↗
+                            </a>
+                        </div>
+                    </div>
+
+                    {/* Sticky Header */}
+                    <header className="sticky top-0 z-40 bg-[#121316]/90 backdrop-blur-md border-b border-white/10 shadow-xl">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                            
+                            {/* Brand Wordmark */}
+                            <a href="#" className="flex flex-col group">
+                                <span className="font-serif text-2xl sm:text-3xl font-bold tracking-[0.25em] text-[#F9F6F0] group-hover:text-[#D4AF37] transition-colors">
+                                    SAGE
+                                </span>
+                                <span className="text-[9px] tracking-[0.35em] text-[#C5A059] uppercase font-sans font-medium">
+                                    CAFE & GRILL
+                                </span>
+                            </a>
+
+                            {/* Desktop Nav Links */}
+                            <nav className="hidden md:flex items-center gap-8 text-sm uppercase tracking-wider font-medium text-gray-300">
+                                <a href="#hero" className="hover:text-[#D4AF37] transition-colors">Home</a>
+                                <a href="#about" className="hover:text-[#D4AF37] transition-colors">Our Story</a>
+                                <a href="#menu" className="hover:text-[#D4AF37] transition-colors">Menu</a>
+                                <a href="#signatures" className="hover:text-[#D4AF37] transition-colors">Signatures</a>
+                                <a href="#gallery" className="hover:text-[#D4AF37] transition-colors">Gallery</a>
+                                <a href="#contact" className="hover:text-[#D4AF37] transition-colors">Contact</a>
+                            </nav>
+
+                            {/* Right Controls */}
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <button 
+                                    onClick={() => setIsSearchOpen(!isSearchOpen)}
+                                    className="p-2 text-gray-300 hover:text-[#D4AF37] hover:bg-white/5 rounded-full transition-all"
+                                    title="Search Menu"
+                                >
+                                    🔍
+                                </button>
+
+                                <button 
+                                    onClick={() => setIsCartOpen(true)}
+                                    className="relative p-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-gray-200 transition-all"
+                                    title="Shopping Cart"
+                                >
+                                    🛍️
+                                    {cartTotalItemCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-[#D4AF37] text-black font-bold text-[10px] w-5 h-5 rounded-full flex items-center justify-center animate-bounce shadow-md">
+                                            {cartTotalItemCount}
+                                        </span>
+                                    )}
+                                </button>
+
+                                <button
+                                    onClick={() => setIsReservationOpen(true)}
+                                    className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#C5A059] to-[#B89047] text-black font-semibold text-xs uppercase tracking-widest rounded-full hover:brightness-110 transition-all shadow-lg"
+                                >
+                                    📅 Book Table
+                                </button>
+
+                                <button
+                                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                    className="md:hidden p-2 text-gray-300 hover:text-white"
+                                >
+                                    {mobileMenuOpen ? '✕' : '☰'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Search Bar Slide */}
+                        {isSearchOpen && (
+                            <div className="bg-[#1a1c23] border-b border-white/10 px-4 py-3">
+                                <div className="max-w-3xl mx-auto flex items-center gap-3 bg-[#121316] border border-white/15 rounded-full px-4 py-2">
+                                    <span className="text-[#C5A059]">🔍</span>
+                                    <input 
+                                        type="text" 
+                                        placeholder="Search steaks, pasta, dynamite shrimps, burgers..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full bg-transparent text-sm text-white focus:outline-none placeholder-gray-500"
+                                        autoFocus
+                                    />
+                                    {searchQuery && (
+                                        <button onClick={() => setSearchQuery("")} className="text-gray-400 hover:text-white">✕</button>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Mobile Drawer */}
+                        {mobileMenuOpen && (
+                            <div className="md:hidden bg-[#121316] border-b border-white/10 px-6 py-6 space-y-4 font-medium text-sm">
+                                <a href="#hero" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-gray-200 border-b border-white/5">Home</a>
+                                <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-gray-200 border-b border-white/5">Our Story</a>
+                                <a href="#menu" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-gray-200 border-b border-white/5">Digital Menu</a>
+                                <a href="#signatures" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-gray-200 border-b border-white/5">Signatures</a>
+                                <a href="#gallery" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-gray-200 border-b border-white/5">Gallery</a>
+                                <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-gray-200 border-b border-white/5">Contact Us</a>
+                                <button
+                                    onClick={() => { setMobileMenuOpen(false); setIsReservationOpen(true); }}
+                                    className="w-full py-3 bg-[#D4AF37] text-black font-bold uppercase tracking-wider text-xs rounded-full mt-2"
+                                >
+                                    Reserve a Table
+                                </button>
+                            </div>
+                        )}
+                    </header>
+
+                    {}
+                    {/* Hero Section */}
+                    <section id="hero" className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
+                        <div className="absolute inset-0 z-0">
+                            <img 
+                                src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=2000&q=80" 
+                                alt="Sage Grill Sizzling Steak" 
+                                className="w-full h-full object-cover object-center brightness-50 scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#121316] via-[#121316]/60 to-transparent" />
+                        </div>
+
+                        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center py-20">
+                            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-black/40 border border-[#C5A059]/40 backdrop-blur-md mb-6">
+                                <span className="text-xs uppercase tracking-[0.25em] text-[#C5A059] font-semibold">
+                                    Gulberg III, Lahore • Fine Dining & Grill
+                                </span>
+                            </div>
+
+                            <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl font-normal tracking-tight text-[#F9F6F0] leading-tight mb-6">
+                                {RESTAURANT_CONFIG.tagline}
+                            </h1>
+
+                            <p className="text-base sm:text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-light leading-relaxed mb-10">
+                                {RESTAURANT_CONFIG.subtext}
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+                                <a 
+                                    href="#menu"
+                                    className="w-full sm:w-auto px-8 py-4 bg-[#D4AF37] hover:bg-[#C5A059] text-black font-semibold uppercase tracking-widest text-xs rounded-full transition-all shadow-xl flex items-center justify-center gap-2"
+                                >
+                                    <span>Explore Our Menu</span> ➔
+                                </a>
+                                
+                                <a 
+                                    href={RESTAURANT_CONFIG.googleMapsUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold uppercase tracking-widest text-xs rounded-full backdrop-blur-md transition-all flex items-center justify-center gap-2"
+                                >
+                                    📍 <span>Find Our Location</span>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    {}
+                    {/* About / Story Section */}
+                    <section id="about" className="py-24 bg-[#1a1c23] border-t border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                                <div className="relative">
+                                    <div className="aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-2xl relative">
+                                        <img 
+                                            src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80" 
+                                            alt="Sage Cafe Atmosphere" 
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="absolute top-6 left-6 bg-[#121316]/90 backdrop-blur-md border border-[#D4AF37]/50 p-4 rounded-xl shadow-lg">
+                                        <p className="font-serif text-lg font-bold text-white">🔥 Artisanal Flame</p>
+                                        <p className="text-xs text-gray-400">Mastered Charbroiling</p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-medium block">
+                                        Culinary Heritage
+                                    </span>
+                                    <h2 className="font-serif text-3xl sm:text-5xl font-normal text-white leading-tight">
+                                        Crafting Culinary Artistry in the Heart of Lahore
+                                    </h2>
+                                    <p className="text-gray-300 leading-relaxed font-light text-base">
+                                        SAGE CAFE & GRILL brings a sophisticated dining vision to Kasuri Road, Gulberg III. Our kitchen brings together carefully sourced cut steaks, velvety handcrafted pastas, rich parmesan creations, and vibrant Asian specialties.
+                                    </p>
+                                    <p className="text-gray-400 leading-relaxed font-light text-sm">
+                                        Whether you are seeking a relaxed lunch with colleagues, an intimate evening with loved ones, or an indulging platter of signature dynamite shrimps, every dish is prepared with meticulous detail and served with authentic Pakistani warmth.
+                                    </p>
+                                    <a 
+                                        href="#menu" 
+                                        className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-[#D4AF37] hover:text-white font-semibold transition-colors mt-4"
+                                    >
+                                        <span>Explore Full Menu Selection</span> ↗
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Signature Section */}
+                    <section id="signatures" className="py-20 bg-[#121316]">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-3xl mx-auto mb-16">
+                                <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-medium block mb-3">
+                                    House Specialties
+                                </span>
+                                <h2 className="font-serif text-3xl sm:text-5xl font-normal text-white">
+                                    Signature Dishes
+                                </h2>
+                                <p className="text-gray-400 text-sm mt-4 font-light">
+                                    Carefully curated culinary highlights favored by guest connoisseurs in Gulberg III.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {MENU_ITEMS.filter(item => item.isSignature).map(item => (
+                                    <div 
+                                        key={item.id}
+                                        className="bg-[#1a1c23] rounded-2xl overflow-hidden border border-white/10 hover:border-[#D4AF37]/50 transition-all flex flex-col justify-between shadow-xl"
+                                    >
+                                        <div>
+                                            <div className="relative aspect-[4/3] overflow-hidden">
+                                                <img 
+                                                    src={item.image} 
+                                                    alt={item.name} 
+                                                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                                                />
+                                                <div className="absolute top-4 left-4 flex flex-wrap gap-1.5">
+                                                    {item.tags.map((tag, idx) => (
+                                                        <span key={idx} className="bg-black/60 backdrop-blur-md text-[#D4AF37] text-[10px] uppercase font-semibold px-2.5 py-1 rounded-full">
+                                                            {tag}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            <div className="p-6">
+                                                <h3 className="font-serif text-xl text-white mb-2">{item.name}</h3>
+                                                <p className="text-xs text-gray-400 font-light leading-relaxed mb-4">{item.description}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="px-6 pb-6 pt-0 flex items-center justify-between border-t border-white/5 mt-auto">
+                                            <span className="font-serif text-lg font-bold text-[#D4AF37]">Rs. {item.price.toLocaleString()}</span>
+                                            <button 
+                                                onClick={() => addToCart(item)}
+                                                className="px-4 py-2 bg-white/10 hover:bg-[#D4AF37] hover:text-black text-white text-xs font-semibold uppercase rounded-full transition-all"
+                                            >
+                                                + Quick Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {}
+                    {/* Digital Menu Section */}
+                    <section id="menu" className="py-24 bg-[#181a20] border-t border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-3xl mx-auto mb-12">
+                                <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-medium block mb-3">
+                                    Explore Selections
+                                </span>
+                                <h2 className="font-serif text-3xl sm:text-5xl font-normal text-white">
+                                    Digital Dining Menu
+                                </h2>
+                            </div>
+
+                            {/* Category Filters */}
+                            <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-10 no-scrollbar justify-start lg:justify-center border-b border-white/10">
+                                {MENU_CATEGORIES.map(category => (
+                                    <button
+                                        key={category}
+                                        onClick={() => {
+                                            setActiveCategory(category);
+                                            setSearchQuery("");
+                                        }}
+                                        className={`whitespace-nowrap px-5 py-2.5 rounded-full text-xs uppercase tracking-wider font-medium transition-all ${
+                                            activeCategory === category && searchQuery === ""
+                                                ? "bg-[#D4AF37] text-black font-bold"
+                                                : "bg-white/5 text-gray-400 hover:text-white border border-white/5"
+                                        }`}
+                                    >
+                                        {category}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Menu Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {filteredMenuItems.map(item => (
+                                    <div key={item.id} className="bg-[#121316] rounded-xl border border-white/10 p-4 flex flex-col justify-between">
+                                        <div>
+                                            <div className="relative aspect-[16/10] rounded-lg overflow-hidden mb-4">
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            </div>
+                                            <h3 className="font-serif text-lg text-white font-medium mb-1">{item.name}</h3>
+                                            <p className="text-xs text-gray-400 font-light leading-relaxed mb-4">{item.description}</p>
+                                        </div>
+
+                                        <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                                            <span className="text-xs font-bold text-[#D4AF37]">Rs. {item.price.toLocaleString()}</span>
+                                            <button
+                                                onClick={() => addToCart(item)}
+                                                className="px-3.5 py-1.5 bg-[#D4AF37] hover:bg-[#C5A059] text-black text-xs font-bold uppercase rounded-full"
+                                            >
+                                                + Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {}
+                    {/* Gallery */}
+                    <section id="gallery" className="py-24 bg-[#121316]">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center max-w-3xl mx-auto mb-16">
+                                <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-medium block mb-3">
+                                    Visual Journey
+                                </span>
+                                <h2 className="font-serif text-3xl sm:text-5xl font-normal text-white">
+                                    Restaurant Ambience & Gallery
+                                </h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {GALLERY_IMAGES.map((img, index) => (
+                                    <div 
+                                        key={index}
+                                        onClick={() => setLightboxIndex(index)}
+                                        className="group relative aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer border border-white/10"
+                                    >
+                                        <img src={img.url} alt={img.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-end">
+                                            <span className="text-[10px] text-[#D4AF37] uppercase">{img.sub}</span>
+                                            <p className="font-serif text-lg text-white">{img.title}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Location & Contact Section */}
+                    <section id="contact" className="py-24 bg-[#1a1c23] border-t border-white/5">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                                <div className="space-y-6">
+                                    <span className="text-xs uppercase tracking-[0.3em] text-[#C5A059] font-medium block">
+                                        Visit Us
+                                    </span>
+                                    <h2 className="font-serif text-3xl sm:text-4xl font-normal text-white">
+                                        Location & Hours
+                                    </h2>
+
+                                    <div className="bg-[#121316] border border-white/10 p-6 rounded-2xl space-y-2">
+                                        <h3 className="font-serif text-lg text-white">Address</h3>
+                                        <p className="text-xs text-gray-300">{RESTAURANT_CONFIG.address}</p>
+                                        <a href={RESTAURANT_CONFIG.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#D4AF37] underline inline-block mt-2">
+                                            Open Google Maps ↗
+                                        </a>
+                                    </div>
+
+                                    <div className="bg-[#121316] border border-white/10 p-6 rounded-2xl space-y-2">
+                                        <h3 className="font-serif text-lg text-white">Phone Enquiries</h3>
+                                        <a href={`tel:${RESTAURANT_CONFIG.phoneRaw}`} className="text-base font-bold text-[#D4AF37]">
+                                            {RESTAURANT_CONFIG.phone}
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {/* Contact Form */}
+                                <div className="bg-[#121316] border border-white/10 p-8 rounded-2xl">
+                                    <h3 className="font-serif text-2xl text-white mb-4">Send an Enquiry</h3>
+                                    <form onSubmit={(e) => { e.preventDefault(); showToast("Enquiry submitted!"); e.target.reset(); }} className="space-y-4">
+                                        <input type="text" required placeholder="Full Name" className="w-full bg-[#1a1c23] border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]" />
+                                        <input type="tel" required placeholder="Mobile Number" className="w-full bg-[#1a1c23] border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]" />
+                                        <textarea rows={3} required placeholder="Your message..." className="w-full bg-[#1a1c23] border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-[#D4AF37]"></textarea>
+                                        <button type="submit" className="w-full py-3.5 bg-[#D4AF37] text-black font-bold uppercase text-xs rounded-xl">Submit Enquiry</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {}
+                    {/* Footer */}
+                    <footer className="bg-[#0b0c0e] border-t border-white/10 text-gray-400 py-12 text-center text-xs">
+                        <div className="max-w-7xl mx-auto px-4 space-y-4">
+                            <span className="font-serif text-2xl font-bold tracking-widest text-white block">SAGE CAFE & GRILL</span>
+                            <p>© {new Date().getFullYear()} SAGE CAFE & GRILL, Gulberg III, Lahore, Pakistan.</p>
+                            <p className="text-[#C5A059]">{RESTAURANT_CONFIG.demoNotice}</p>
+                        </div>
+                    </footer>
+
+                    {/* Cart Drawer */}
+                    {isCartOpen && (
+                        <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm">
+                            <div className="w-full max-w-md bg-[#121316] border-l border-white/10 h-full p-6 flex flex-col justify-between">
+                                <div>
+                                    <div className="flex justify-between items-center border-b border-white/10 pb-4">
+                                        <h2 className="font-serif text-xl text-white">Your Cart</h2>
+                                        <button onClick={() => setIsCartOpen(false)} className="text-gray-400">✕</button>
+                                    </div>
+
+                                    <div className="mt-4 space-y-3 max-h-[50vh] overflow-y-auto">
+                                        {cart.map(item => (
+                                            <div key={item.id} className="flex justify-between items-center bg-[#1a1c23] p-3 rounded-xl border border-white/5">
+                                                <div>
+                                                    <p className="text-sm font-medium text-white">{item.name}</p>
+                                                    <p className="text-xs text-[#D4AF37]">Rs. {item.price}</p>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <button onClick={() => updateQty(item.id, -1)} className="px-2 bg-white/10 rounded">-</button>
+                                                    <span className="text-xs">{item.qty}</span>
+                                                    <button onClick={() => updateQty(item.id, 1)} className="px-2 bg-white/10 rounded">+</button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {cart.length > 0 && (
+                                    <div className="border-t border-white/10 pt-4 space-y-2">
+                                        <div className="flex justify-between text-xs">
+                                            <span>Total</span>
+                                            <span className="text-[#D4AF37] font-bold">Rs. {cartGrandTotal.toLocaleString()}</span>
+                                        </div>
+                                        <button onClick={() => { setIsCartOpen(false); setIsCheckoutOpen(true); }} className="w-full py-3 bg-[#D4AF37] text-black font-bold uppercase text-xs rounded-xl">
+                                            Proceed to Checkout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Checkout Modal */}
+                    {isCheckoutOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                            <div className="bg-[#1a1c23] border border-white/10 rounded-2xl max-w-md w-full p-6 relative">
+                                <button onClick={() => setIsCheckoutOpen(false)} className="absolute top-4 right-4 text-gray-400">✕</button>
+                                <h3 className="font-serif text-2xl text-white mb-4">Checkout Order</h3>
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    const msg = `Order request for ${e.target.name.value} (${e.target.phone.value}) - Total Rs. ${cartGrandTotal}`;
+                                    window.open(`https://wa.me/${RESTAURANT_CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+                                    clearCart();
+                                    setIsCheckoutOpen(false);
+                                }} className="space-y-4">
+                                    <input name="name" type="text" required placeholder="Full Name" className="w-full bg-[#121316] border border-white/15 rounded-xl px-4 py-3 text-sm text-white" />
+                                    <input name="phone" type="tel" required placeholder="Phone Number" className="w-full bg-[#121316] border border-white/15 rounded-xl px-4 py-3 text-sm text-white" />
+                                    <button type="submit" className="w-full py-3.5 bg-emerald-600 text-white font-bold text-xs uppercase rounded-xl">
+                                        Send Order via WhatsApp
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Reservation Modal */}
+                    {isReservationOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                            <div className="bg-[#1a1c23] border border-white/10 rounded-2xl max-w-md w-full p-6 relative">
+                                <button onClick={() => setIsReservationOpen(false)} className="absolute top-4 right-4 text-gray-400">✕</button>
+                                <h3 className="font-serif text-2xl text-white mb-4">Table Reservation</h3>
+                                <form onSubmit={(e) => { e.preventDefault(); setIsReservationOpen(false); showToast("Reservation Submitted!"); }} className="space-y-4">
+                                    <input type="text" required placeholder="Guest Name" className="w-full bg-[#121316] border border-white/15 rounded-xl px-4 py-3 text-sm text-white" />
+                                    <input type="date" required className="w-full bg-[#121316] border border-white/15 rounded-xl px-4 py-3 text-sm text-white" />
+                                    <button type="submit" className="w-full py-3.5 bg-[#D4AF37] text-black font-bold uppercase text-xs rounded-xl">Confirm Reservation</button>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Gallery Lightbox */}
+                    {lightboxIndex !== null && (
+                        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
+                            <button onClick={() => setLightboxIndex(null)} className="absolute top-6 right-6 text-white text-2xl">✕</button>
+                            <img src={GALLERY_IMAGES[lightboxIndex].url} alt="Lightbox Preview" className="max-h-[80vh] rounded-lg object-contain" />
+                        </div>
+                    )}
+
+                    {/* Toast Notification */}
+                    {toastMessage && (
+                        <div className="fixed bottom-6 right-6 z-50 bg-[#D4AF37] text-black font-bold px-5 py-3 rounded-xl shadow-2xl text-xs uppercase">
+                            ✓ {toastMessage}
+                        </div>
+                    )}
+
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
